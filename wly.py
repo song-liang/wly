@@ -16,7 +16,8 @@ def ui_click(name, pause=2, confidence=0.85):
         pyautogui.click(center)  # 点击
     except TypeError:
         print("'NoneType' object is not subscriptable", "寻找不到图片位置")
-
+    except pyautogui.ImageNotFoundException:
+        print("pyautogui.ImageNotFoundException", "寻找不到图片位置")
 
 # 传入点击步骤列表，进行点击执行, 可选择需要停顿等待加载数据的步骤名字和时间
 def step_exec(step_list, pause=1.5, confidence=0.85, step_pause=None, step_pause_time=3):
