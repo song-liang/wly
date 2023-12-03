@@ -4,20 +4,26 @@
 # 游奇乐趣卧龙吟网页游戏，鼠标自动点击领取日常奖励和执行任务
 import time
 import pyautogui
+import logging
+
+logging.basicConfig(level=logging.INFO, datefmt=' %Y/%m/%d %H:%M:%S', filename='/home/bright/workspace/wly/job.log', filemode='w',
+                    format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',)
+logger = logging.getLogger(__name__)
 
 
 # 查找图标位置，点击鼠标
 def ui_click(name, pause=2, confidence=0.85):
     try:
-        print(name)
+        logging.info(name)
         pyautogui.PAUSE = pause  # 延迟停顿秒
         point = pyautogui.locateOnScreen('png/' + name + '.png', confidence=confidence, grayscale=True)  # 寻找按钮
         center = pyautogui.center(point)  # 寻找图片的中心
         pyautogui.click(center)  # 点击
     except TypeError:
-        print("'NoneType' object is not subscriptable", "寻找不到图片位置")
+        logging.warning("'NoneType' object is not subscriptable: 寻找不到图片位置")
     except pyautogui.ImageNotFoundException:
-        print("pyautogui.ImageNotFoundException", "寻找不到图片位置")
+        logging.warning("pyautogui.ImageNotFoundException: 寻找不到图片位置")
+
 
 # 传入点击步骤列表，进行点击执行, 可选择需要停顿等待加载数据的步骤名字和时间
 def step_exec(step_list, pause=1.5, confidence=0.85, step_pause=None, step_pause_time=3):
@@ -201,7 +207,7 @@ def zhengcheng():
 def huoyue_maijunling():
     step_list = ["huoyue-maijunling", "huoyue-maijunling-queding", "huoyue-maijunling-lingqu"]
     for step in step_list:
-        print(step)
+        logging.info(step)
         pyautogui.PAUSE = 1  # 延迟停顿秒
         try:
             point = pyautogui.locateOnScreen('png/' + step + '.png', confidence=0.95, grayscale=True)
@@ -211,7 +217,9 @@ def huoyue_maijunling():
             pyautogui.click(x, y)  # 点击
             # pyautogui.moveRel(1100, 0, duration=1)      # 鼠标相对于当前位置x坐标右移1100个距离，1秒内完成
         except TypeError:
-            print("'NoneType' object is not subscriptable", "寻找不到图片位置")
+            logging.warning("'NoneType' object is not subscriptable: 寻找不到图片位置")
+        except pyautogui.ImageNotFoundException:
+            logging.warning("pyautogui.ImageNotFoundException: 寻找不到图片位置")
 
 
 # 活跃奖励
@@ -237,25 +245,27 @@ def fuben():
             if point is not None:
                 center = pyautogui.center(point)  # 寻找图片的中心
                 pyautogui.click(center)  # 点击
-                print("点击副本")
+                logging.info("点击副本")
                 break
             else:
-                print("找不到副本图")
+                logging.info("找不到副本图")
 
         # 副本攻击
         step_list = ["fuben-gongji", "fuben-tiaoguo", "fuben-tuichu"]
         for name in step_list:
             try:
-                print(name)
+                logging.info(name)
                 pyautogui.PAUSE = 2  # 延迟停顿秒
                 point = pyautogui.locateOnScreen('png/' + name + '.png', confidence=0.8, grayscale=True)  # 寻找按钮
                 center = pyautogui.center(point)  # 寻找图片的中心
                 pyautogui.click(center)  # 点击
             except TypeError:
-                print("'NoneType' object is not subscriptable", "寻找不到图片位置")
+                logging.warning("'NoneType' object is not subscriptable: 寻找不到图片位置")
+            except pyautogui.ImageNotFoundException:
+                logging.warning("pyautogui.ImageNotFoundException: 寻找不到图片位置")
 
 
-def main():
+def wly():
     richang_dengluli()          # 日常登录礼
     xiaomishu()                 # 小秘书
     xinshijie()                 # 新世界领奖
@@ -277,4 +287,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    wly()
