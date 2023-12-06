@@ -5,10 +5,12 @@
 import time
 import pyautogui
 import logging
+import webbrowser
 
 logging.basicConfig(level=logging.INFO, datefmt=' %Y/%m/%d %H:%M:%S', filename='/home/bright/workspace/wly/job.log', filemode='w',
                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',)
 logger = logging.getLogger(__name__)
+
 
 
 # 查找图标位置，点击鼠标
@@ -26,7 +28,7 @@ def ui_click(name, pause=2, confidence=0.85):
 
 
 # 传入点击步骤列表，进行点击执行, 可选择需要停顿等待加载数据的步骤名字和时间
-def step_exec(step_list, pause=1.5, confidence=0.85, step_pause=None, step_pause_time=3):
+def step_exec(step_list, pause=2, confidence=0.85, step_pause=None, step_pause_time=3):
     for step in step_list:
         ui_click(step, pause, confidence)
         if step == step_pause:
@@ -136,9 +138,9 @@ def shijie_ziyuan():
 
 # 世界-刺探
 def shijie_citan():
-    step_list = ["shijie-yunnan", "shijie-citan", "guanbi",
-                 'shijie-chibi', "shijie-citan", "guanbi",
-                 "shijie-maichen", "shijie-zhengcha", "shijie-zhengcha", "shijie-zhengcha-guanbi", "guanbi",
+    step_list = ["shijie-changbanpo", "shijie-citan", "guanbi",
+                 'shijie-maicheng', "shijie-citan", "guanbi",
+                 "shijie-huarongdao", "shijie-zhengcha", "shijie-zhengcha", "shijie-zhengcha-guanbi", "guanbi",
                  "guanbi", "zhucheng"]
     for step in step_list:
         ui_click(step, confidence=0.90)
