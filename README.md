@@ -11,4 +11,10 @@ source py3env/bin/activate
 
 # 安装PyAutoGUI模块
 pip install pyautogui numpy opencv-python
+
+# 修改配置账号
+vim config.py
+
+# 执行
+python autojob.py
 ```
