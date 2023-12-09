@@ -38,7 +38,7 @@ def step_exec(step_list, pause=2, confidence=0.85, step_pause=None, step_pause_t
 
 # 执行小秘书
 def xiaomishu():
-    step_exec(step_list=['xiaomishu', 'xiaomishu-zhixing', 'guanbi', 'xiaomishu-tuichu'], pause=1.5, confidence=0.85)
+    step_exec(step_list=['xiaomishu', 'xiaomishu-zhixing', 'guanbi', 'xiaomishu-tuichu'], confidence=0.85)
 
 
 # 新世界
@@ -187,7 +187,8 @@ def wujiang_jinengshengji(name):
 # 竞技场
 def jingjichang():
     # 日常奖励领取
-    step_exec(step_list=["jingjichang", "jingjichang-baoxiang", "jingjichang-jiangli-queding"], confidence=0.8)
+    step_exec(step_list=["jingjichang", "jingjichang-baoxiang", "jingjichang-jiangli-queding", 
+                         "jingjichang-meiyoujiangli-guanbi"], confidence=0.8)
 
     # 挑战
     n = 0
