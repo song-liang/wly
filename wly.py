@@ -140,7 +140,7 @@ def shijie_ziyuan():
 # 世界-刺探
 def shijie_citan():
     step_list = ["shijie-changbanpo", "shijie-citan", "guanbi",
-                 'shijie-maicheng', "shijie-citan", "guanbi",
+                 'shijie-jiangling', "shijie-citan", "guanbi",
                  "shijie-huarongdao", "shijie-zhengcha", "shijie-zhengcha", "shijie-zhengcha-guanbi", "guanbi",
                  "guanbi", "zhucheng"]
     for step in step_list:
@@ -166,8 +166,10 @@ def junshifu():
 
 # 府邸-马场
 def fudi_machang():
-    # 进入马场
-    step_exec(step_list=["fudi", "fudi-machang"])
+    # 点击坐标进入府邸，进入马场
+    pyautogui.click(1530, 770)
+    ui_click("fudi-machang")
+    #step_exec(step_list=["fudi", "fudi-machang"])
     # 互动两次
     n = 0
     while n < 2:
@@ -186,8 +188,10 @@ def wujiang_jinengshengji(name):
 
 # 竞技场
 def jingjichang():
+    # 点击坐标进入竞技场
+    pyautogui.click(700, 470)
     # 日常奖励领取
-    step_exec(step_list=["jingjichang", "jingjichang-baoxiang", "jingjichang-jiangli-queding", 
+    step_exec(step_list=["jingjichang-baoxiang", "jingjichang-jiangli-queding", 
                          "jingjichang-meiyoujiangli-guanbi"], confidence=0.8)
 
     # 挑战
@@ -214,7 +218,7 @@ def huoyue_maijunling():
         logging.info(step)
         pyautogui.PAUSE = 1  # 延迟停顿秒
         try:
-            point = pyautogui.locateOnScreen('png/' + step + '.png', confidence=0.95, grayscale=True)
+            point = pyautogui.locateOnScreen('png/' + step + '.png', confidence=0.90, grayscale=True)
             x, y = pyautogui.center(point)  # 寻找图片的中心
             if step == "huoyue-maijunling":
                 x = x + 1100
@@ -228,7 +232,8 @@ def huoyue_maijunling():
 
 # 活跃奖励
 def huoyue():
-    step_exec(step_list=["huoyue", "huoyue-meiriyiqian", "huoyue-yijianlingqu"])  # 一件领取活跃值
+    step_exec(step_list=["huoyue", "huoyue-meiriyiqian", "huoyue-yijianlingqu"],
+              step_pause="huoyue-yijianlingqu", step_pause_time=4)      # 一件领取活跃值
 
     huoyue_maijunling()  # 买军令
 
