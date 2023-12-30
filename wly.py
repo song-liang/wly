@@ -8,7 +8,7 @@ import logging
 import webbrowser
 from config import *
 
-logging.basicConfig(level=logging.INFO, datefmt=' %Y/%m/%d %H:%M:%S', filename='job.log', filemode='w',
+logging.basicConfig(level=logging.INFO, datefmt=' %Y/%m/%d %H:%M:%S', filename='job.log', filemode='a',
                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',)
 logger = logging.getLogger(__name__)
 
@@ -22,10 +22,10 @@ def ui_click(name, pause=2, confidence=0.85):
         point = pyautogui.locateOnScreen('png/' + name + '.png', confidence=confidence, grayscale=True)  # 寻找按钮
         center = pyautogui.center(point)  # 寻找图片的中心
         pyautogui.click(center)  # 点击
-    except TypeError:
-        logging.warning("'NoneType' object is not subscriptable: 寻找不到图片位置")
-    except pyautogui.ImageNotFoundException:
-        logging.warning("pyautogui.ImageNotFoundException: 寻找不到图片位置")
+    except TypeError as e:
+        logging.warning(str(e) + ": 寻找不到图片位置")
+    except pyautogui.ImageNotFoundException as e:
+        logging.warning(str(e) + ": 寻找不到图片位置")
 
 
 # 传入点击步骤列表，进行点击执行, 可选择需要停顿等待加载数据的步骤名字和时间
@@ -34,6 +34,15 @@ def step_exec(step_list, pause=2, confidence=0.85, step_pause=None, step_pause_t
         ui_click(step, pause, confidence)
         if step == step_pause:
             time.sleep(step_pause_time)  # 延迟等待加载数据
+
+
+# 取消消费金币提示
+def xitongshezhi():
+    # 坐标点击进入信息设置
+    pyautogui.click(80, 145)
+    time.sleep(1.5)                          # 游戏界面加载等待
+    step_exec(step_list=['xitongshezhi-xitong', 'xitongshezhi-xiaofeishezhi', "xitongshezhi-gouxuan", 
+              "xitongshezhi-xitong-guanbi",'guanbi'], confidence=0.85)
 
 
 # 执行小秘书
@@ -72,7 +81,7 @@ def juntuan():
 
 # 古城探秘
 def richang_gucheng():
-    step_exec(step_list=['richang', 'richang-guchengtanmi', 'richang-guchengtanmi-jindu',
+    step_exec(step_list=['richang', 'richang-guchengtanmi', 'richang-guchengtanmi-240',
                          'richang-guchengtanmi-lianxusaodang', 'richang-guchengtanmi-kaishisaodang',
                          "guanbi", "richang-guchangtanmi-fanhui"],
               step_pause="richang-guchengtanmi-kaishisaodang", step_pause_time=8)
@@ -119,8 +128,8 @@ def richang_qunxiongzhulu():
             step_pause="richang-qunxiongzhulu-pipei", step_pause_time=8)
 
     # 领取奖励,退出返回主城
-    step_list = ['richang-qunxiongzhulu-jiangli', 'richang-qunxiongzhulu-jianglilingqu', 'guanbi',
-                 "richang-fanhui", "richang-fanhui"]
+    step_list = ['richang-qunxiongzhulu-jiangli', 'richang-qunxiongzhulu-jianglilingqu', "richang-qunxiongzhulu-jifenjiangli",
+                 'richang-qunxiongzhulu-jifenjianglilingqu', 'guanbi', "richang-fanhui", "richang-fanhui"]
     for step in step_list:
         ui_click(step)
         # 领取所有奖励
@@ -131,22 +140,23 @@ def richang_qunxiongzhulu():
                 ui_click(step)
 
 
-# 世界-田矿
-def shijie_ziyuan():
-    step_exec(step_list=["shijie", "shijie-ziyuan", 'shijie-ziyuan-tiankuang', "shijie-ziyuan-zhanling", "guanbi",
-                         "shijie"], confidence=0.7, step_pause="shijie", step_pause_time=4)
+# 世界
+def shijie():
 
+    # 资源-田矿
+    step_exec(step_list=["shijie", "shijie-ziyuan", 'shijie-ziyuan-tiankuang', "shijie-ziyuan-zhanling", "guanbi", "shijie"], 
+              confidence=0.7, pause=2.5, step_pause="shijie", step_pause_time=4)
 
-# 世界-刺探
-def shijie_citan():
+    # 世界-刺探
     step_list = ["shijie-changbanpo", "shijie-citan", "guanbi",
-                 'shijie-jiangling', "shijie-citan", "guanbi",
-                 "shijie-huarongdao", "shijie-zhengcha", "shijie-zhengcha", "shijie-zhengcha-guanbi", "guanbi",
+                 'shijie-maicheng', "shijie-citan", "guanbi",
+                 "shijie-zhuzha", "shijie-zhengcha", "shijie-zhengcha", "shijie-zhengcha-guanbi", "guanbi",
                  "guanbi", "zhucheng"]
     for step in step_list:
         ui_click(step, confidence=0.90)
-        # if step == 'shijie-shan':
-        #     pyautogui.dragRel(0, -250, duration=3)      # 点击向上拖动屏幕
+        if step == 'shijie-zhuzha':
+            pyautogui.moveRel(0, 120, duration=1)       # 鼠标向下移动，1秒完成
+            pyautogui.click()                           # 鼠标点击当前位置 
 
 
 # 军事府
@@ -164,19 +174,60 @@ def junshifu():
     step_exec(step_list=["junshifu-fanhui", "guanbi"], confidence=0.8)
 
 
-# 府邸-马场
-def fudi_machang():
-    # 点击坐标进入府邸，进入马场
+# 府邸
+def fudi():
+    # 点击坐标进入府邸 (直接使用坐标，避免四季图标变化找不到位置)
     pyautogui.click(1530, 770)
+
+    # 府邸-马场
     ui_click("fudi-machang")
-    #step_exec(step_list=["fudi", "fudi-machang"])
     # 互动两次
     n = 0
     while n < 2:
         n += 1
         step_exec(step_list=["fudi-machang-hudong", "fudi-machang-queding"])
+    # 返回府邸
+    ui_click("fudi-machang-fanhui")
+
+
+    # 府邸-寻访
+    ui_click("fudi-xunfang")
+    # 10次会谈次数，进行高级寻访5次
+    count, n = 10, 0  # 计数
+    while n < 5:
+        n += 1
+        step_list = ["fudi-xunfang-gaojixunfang", "fudi-xunfang-shanggu", "fudi-xunfang-dagu", "fudi-xunfang-jufu", "fudi-xunfang-haozu"]
+        count_except = 0  # 错误计数
+        for step in step_list:
+            try:
+                logging.info(step)
+                pyautogui.PAUSE = 2  # 延迟停顿秒
+                point = pyautogui.locateOnScreen('png/' + step + '.png', confidence=0.85, grayscale=True)  # 寻找按钮
+                center = pyautogui.center(point)  # 寻找图片的中心
+                pyautogui.click(center)  # 点击
+            except TypeError as e:
+                logging.warning(str(e) + ": 寻找不到图片位置")
+                count_except += 1
+            except pyautogui.ImageNotFoundException as e:
+                logging.warning(str(e) + ": 寻找不到图片位置")
+                count_except += 1
+        if count_except < 4:        # 4个商贾或豪族，寻访到一个商贾时，错误计数小于4，谈话次数减一
+            count -= 1
+    logging.info("剩余谈话次数：" + str(count))
+    # 返回府邸
+    ui_click("fudi-xunfang-fanhui")
+
+    # 府邸-内堂
+    ui_click("fudi-neitang")
+    # 剩余谈话次数用完
+    n = 0
+    while n < count:
+        n += 1
+        ui_click("fudi-neitang-tanhua")
+
     # 返回主城
-    step_exec(step_list=["fudi-machang-fanhui", "fudi-fanhui"], confidence=0.80)
+    step_exec(step_list=["fudi-neitang-fanhui", "fudi-fanhui"], confidence=0.80)
+
 
 
 # 武将技能升级
@@ -211,35 +262,38 @@ def zhengcheng():
                          "richang-zhengcheng-fanhui"])
 
 
-# 活跃界面购买军令
-def huoyue_maijunling():
-    step_list = ["huoyue-maijunling", "huoyue-maijunling-queding", "huoyue-maijunling-lingqu"]
-    for step in step_list:
-        logging.info(step)
-        pyautogui.PAUSE = 1  # 延迟停顿秒
-        try:
-            point = pyautogui.locateOnScreen('png/' + step + '.png', confidence=0.90, grayscale=True)
-            x, y = pyautogui.center(point)  # 寻找图片的中心
-            if step == "huoyue-maijunling":
-                x = x + 1100
-            pyautogui.click(x, y)  # 点击
-            # pyautogui.moveRel(1100, 0, duration=1)      # 鼠标相对于当前位置x坐标右移1100个距离，1秒内完成
-        except TypeError:
-            logging.warning("'NoneType' object is not subscriptable: 寻找不到图片位置")
-        except pyautogui.ImageNotFoundException:
-            logging.warning("pyautogui.ImageNotFoundException: 寻找不到图片位置")
-
-
 # 活跃奖励
 def huoyue():
     step_exec(step_list=["huoyue", "huoyue-meiriyiqian", "huoyue-yijianlingqu"],
               step_pause="huoyue-yijianlingqu", step_pause_time=4)      # 一件领取活跃值
 
-    huoyue_maijunling()  # 买军令
+   # 活跃界面购买军令
+    step_list = ["huoyue-maijunling", "huoyue-maijunling-queding", "huoyue-maijunling-lingqu"]
+    for step in step_list:
+        logging.info(step)
+        pyautogui.PAUSE = 1  # 延迟停顿秒
+        # 方法一：先点击，移动后再点击
+        ui_click(step)
+        if step == "huoyue-maijunling":
+            pyautogui.moveRel(1100, 0, duration=1)      # 鼠标相对于当前位置x坐标右移1100个距离，1秒内完成
+            pyautogui.click()  # 点击
 
-    step_exec(step_list=["huoyue-60", "huoyue-80", "huoyue-100", "huoyue-120", "huoyue-140", "huoyue-160"],
-              pause=4)  # 领取活跃奖励, 停顿4.5秒，避免文字挡住图标
-    step_exec(step_list=["huoyue-fanhui"])
+#       # 方法二 先判断中心点移动后点击
+#       if step == "huoyue-maijunling":
+#           try:
+#               point = pyautogui.locateOnScreen('png/' + step + '.png', confidence=0.90, grayscale=True)
+#               x, y = pyautogui.center(point)  # 寻找图片的中心
+#               pyautogui.click(x+1100, y)      # 点击
+#           except TypeError as e:
+#               logging.warning(str(e) + ": 寻找不到图片位置")
+#           except pyautogui.ImageNotFoundException as e:
+#               logging.warning(str(e) + ": 寻找不到图片位置")
+#       else:
+#           ui_click(step)
+
+    # 领取活跃奖励, 停顿4秒，避免文字挡住图标
+    step_exec(step_list=["huoyue-60", "huoyue-80", "huoyue-100", "huoyue-120", "huoyue-140", "huoyue-160"], pause=4) 
+    ui_click("huoyue-fanhui")
 
 
 def fuben():
@@ -268,13 +322,14 @@ def fuben():
                 point = pyautogui.locateOnScreen('png/' + name + '.png', confidence=0.8, grayscale=True)  # 寻找按钮
                 center = pyautogui.center(point)  # 寻找图片的中心
                 pyautogui.click(center)  # 点击
-            except TypeError:
-                logging.warning("'NoneType' object is not subscriptable: 寻找不到图片位置")
-            except pyautogui.ImageNotFoundException:
-                logging.warning("pyautogui.ImageNotFoundException: 寻找不到图片位置")
+            except TypeError as e:
+                logging.warning(str(e) + ": 寻找不到图片位置")
+            except pyautogui.ImageNotFoundException as e:
+                logging.warning(str(e) + ": 寻找不到图片位置")
 
 
 def wly():
+    xitongshezhi()              # 系统设置取消金币消费提醒
     richang_dengluli()          # 日常登录礼
     xiaomishu()                 # 小秘书
     xinshijie()                 # 新世界领奖
@@ -285,10 +340,9 @@ def wly():
     richang_hulaoguan()         # 日常-虎牢关
     richang_qunxiongzhulu()     # 日常-群雄逐鹿
     jingjichang()               # 竞技场
-    fudi_machang()              # 府邸-马场
-    wujiang_jinengshengji("gongsunxiu")  # 武将技能升级
-    shijie_ziyuan()             # 世界-资源田矿
-    shijie_citan()              # 世界-刺探
+    fudi()                      # 府邸-马场-寻访-谈话
+    wujiang_jinengshengji("tongyuan")  # 武将技能升级
+    shijie()                    # 世界-资源田矿-城池刺探
     junshifu()                  # 军事府
     huoyue()                    # 活跃奖励
     zhengcheng()                # 征程奖励
@@ -317,7 +371,7 @@ def execute_job(url):
     logging.info("----------" + "开始执行" + "----------")
     logging.info("----------" + url + "----------")
     webbrowser.get().open_new_tab(url)      # 打开新标签
-    time.sleep(25)                          # 游戏界面加载等待
+    time.sleep(30)                          # 游戏界面加载等待
 
     pyautogui.click(x=100, y=200)           # 随便点击一下页面退出登陆后的弹窗
     wly()                                   # 执行wly任务

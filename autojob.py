@@ -6,11 +6,16 @@ import os
 import time
 import logging
 
+logging.basicConfig(level=logging.INFO, datefmt=' %Y/%m/%d %H:%M:%S', filename='job.log', filemode='w',
+                            format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',)
+logger = logging.getLogger(__name__)
+
+
 # 启动deepin桌面，桌面比较消耗资源增加功耗，所有停掉了
 logging.info("----------启动桌面----------")
 os.system('sudo systemctl start lightdm.service')           # 需要先设置sudo免密
-os.system('sudo systemctl start x11vnc')
 time.sleep(10)
+os.system('sudo systemctl restart x11vnc.service')
 
 # 设置DISPLAY变量，指定程序运行的图形界面
 os.environ['DISPLAY'] = ':0'  # 设置 DISPLAY 环境变量  
