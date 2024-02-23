@@ -13,9 +13,8 @@ logging.basicConfig(level=logging.INFO, datefmt=' %Y/%m/%d %H:%M:%S', filename='
 logger = logging.getLogger(__name__)
 
 
-
 # 查找图标位置，点击鼠标
-def ui_click(name, pause=2, confidence=0.85):
+def ui_click(name, pause=1.5, confidence=0.85):
     try:
         logging.info(name)
         pyautogui.PAUSE = pause  # 延迟停顿秒
@@ -29,7 +28,7 @@ def ui_click(name, pause=2, confidence=0.85):
 
 
 # 传入点击步骤列表，进行点击执行, 可选择需要停顿等待加载数据的步骤名字和时间
-def step_exec(step_list, pause=2, confidence=0.85, step_pause=None, step_pause_time=3):
+def step_exec(step_list, pause=1.5, confidence=0.85, step_pause=None, step_pause_time=3):
     for step in step_list:
         ui_click(step, pause, confidence)
         if step == step_pause:
@@ -47,7 +46,7 @@ def xitongshezhi():
 
 # 执行小秘书
 def xiaomishu():
-    step_exec(step_list=['xiaomishu', 'xiaomishu-zhixing', 'guanbi', 'xiaomishu-tuichu'], confidence=0.85)
+    step_exec(step_list=['xiaomishu', 'xiaomishu-zhixing', 'guanbi', 'xiaomishu-tuichu'], pause=2, confidence=0.85)
 
 
 # 新世界
@@ -59,7 +58,7 @@ def xinshijie():
 # 日常
 def richang_dengluli():
     step_exec(step_list=["richang-fengshang", "richang-zhizunli", 'richang-dengluli', "richang-dengluli-lingqu",
-                         "ricahng-youjian", "ricahng-youjian-lingqu", "ricahng-youjian-fanhui"], confidence=0.8)
+                         "ricahng-youjian", "ricahng-youjian-lingqu", "ricahng-youjian-fanhui"], confidence=0.75)
 
 
 # 日常-缤纷礼
@@ -84,7 +83,7 @@ def richang_gucheng():
     step_exec(step_list=['richang', 'richang-guchengtanmi', 'richang-guchengtanmi-240',
                          'richang-guchengtanmi-lianxusaodang', 'richang-guchengtanmi-kaishisaodang',
                          "guanbi", "richang-guchangtanmi-fanhui"],
-              step_pause="richang-guchengtanmi-kaishisaodang", step_pause_time=8)
+              step_pause="richang-guchengtanmi-kaishisaodang", step_pause_time=8, confidence=0.75, pause=2)
 
 
 # 古城虎牢关
@@ -117,11 +116,11 @@ def richang_qunxiongzhulu():
     ui_click("richang-dianjiyidong")
     pyautogui.dragRel(-1000, 0, duration=1)
     # 点击进入群雄逐鹿
-    ui_click("richang-qunxiongzhulu")
+    ui_click("richang-qunxiongzhulu", confidence=0.80)
 
-    # 匹配挑战15次
+    # 匹配挑战10次
     n = 0
-    while n < 15:
+    while n < 12:
         n += 1
         step_exec(
             step_list=['richang-qunxiongzhulu-pipei', 'richang-qunxiongzhulu-tiaoguo', 'richang-qunxiaongzhulu-tuichu'],
@@ -145,7 +144,7 @@ def shijie():
 
     # 资源-田矿
     step_exec(step_list=["shijie", "shijie-ziyuan", 'shijie-ziyuan-tiankuang', "shijie-ziyuan-zhanling", "guanbi", "shijie"], 
-              confidence=0.7, pause=2.5, step_pause="shijie", step_pause_time=4)
+              confidence=0.70, pause=2.5, step_pause="shijie", step_pause_time=4)
 
     # 世界-刺探
     step_list = ["shijie-changbanpo", "shijie-citan", "guanbi",
@@ -153,7 +152,7 @@ def shijie():
                  "shijie-zhuzha", "shijie-zhengcha", "shijie-zhengcha", "shijie-zhengcha-guanbi", "guanbi",
                  "guanbi", "zhucheng"]
     for step in step_list:
-        ui_click(step, confidence=0.90)
+        ui_click(step, confidence=0.80)
         if step == 'shijie-zhuzha':
             pyautogui.moveRel(0, 120, duration=1)       # 鼠标向下移动，1秒完成
             pyautogui.click()                           # 鼠标点击当前位置 
@@ -192,8 +191,8 @@ def fudi():
 
     # 府邸-寻访
     ui_click("fudi-xunfang")
-    # 10次会谈次数，进行高级寻访5次
-    count, n = 10, 0  # 计数
+    # 15次会谈次数，进行高级寻访5次
+    count, n = 15, 0  # 计数
     while n < 5:
         n += 1
         step_list = ["fudi-xunfang-gaojixunfang", "fudi-xunfang-shanggu", "fudi-xunfang-dagu", "fudi-xunfang-jufu", "fudi-xunfang-haozu"]
@@ -234,7 +233,7 @@ def fudi():
 def wujiang_jinengshengji(name):
     step_exec(step_list=["wujiang", "wujiang-" + name, "wujiang-jineng", "wujiang-shengji", "wujiang-huode",
                          "wujiang-yijiansaodang", "guanbi", "guanbi", "guanbi", "wujiang-fanhui"],
-              step_pause='wujiang-huode', step_pause_time=2)
+              step_pause='wujiang-huode', step_pause_time=2, confidence=0.75, pause=2)
 
 
 # 竞技场
@@ -256,16 +255,10 @@ def jingjichang():
     step_exec(step_list=["jingjichang-tiaozhan-quxiao", "jingjichang-tiaozhan-fanhui"])
 
 
-# 征程活跃奖励
-def zhengcheng():
-    step_exec(step_list=["richang-zhengcheng", "richang-zhengcheng-renwu", 'richang-zhengcheng-lingqu',
-                         "richang-zhengcheng-fanhui"])
-
-
 # 活跃奖励
 def huoyue():
     step_exec(step_list=["huoyue", "huoyue-meiriyiqian", "huoyue-yijianlingqu"],
-              step_pause="huoyue-yijianlingqu", step_pause_time=4)      # 一件领取活跃值
+              step_pause="huoyue-yijianlingqu", step_pause_time=4)      # 一键领取活跃值
 
    # 活跃界面购买军令
     step_list = ["huoyue-maijunling", "huoyue-maijunling-queding", "huoyue-maijunling-lingqu"]
@@ -294,6 +287,53 @@ def huoyue():
     # 领取活跃奖励, 停顿4秒，避免文字挡住图标
     step_exec(step_list=["huoyue-60", "huoyue-80", "huoyue-100", "huoyue-120", "huoyue-140", "huoyue-160"], pause=4) 
     ui_click("huoyue-fanhui")
+
+
+# 武魁高塔
+def wukuigaota():
+    ui_click("wukuigaota-qiehuan")                  # 向左切换到天狼
+    ui_click("wukuigaota-xuanzedengji")             # 选择天狼等级
+    pyautogui.dragRel(0, -260, duration=2)          # 向上拖拽出220级
+    ui_click("wukuigaota-tianlang220", confidence=0.90)   # 选择220级
+    # 攻击boss 3次
+    n = 0
+    while n < 3:
+        n += 1
+        step_exec(step_list=["wukuigaota-gongji", "wukuigaota-chuangjiantuiwu", "wukuigaota-kaizhan",
+                             "wukuigaota-jiaru", "wukuigaota-queding"],
+                  step_pause="wukuigaota-jiaru", step_pause_time=12)  # 等待攻击完
+
+    # 返回
+    ui_click("wukuigaota-fanhui")
+
+
+# 征程活跃奖励
+def zhengcheng():
+    # 任务奖励
+    step_exec(step_list=["richang-zhengcheng", "richang-zhengcheng-renwu", 'richang-zhengcheng-lingqu'])
+
+    # 进入武魁高塔，先点击，移动后再点击
+    ui_click("wukuigaota", confidence=0.75)
+    pyautogui.moveRel(640, 0, duration=1)  # 鼠标相对于当前位置x坐标右移1100个距离，1秒内完成
+    pyautogui.click()  # 点击
+
+    # 武魁高塔
+    wukuigaota()
+
+    # 返回主城
+    ui_click("richang-zhengcheng-fanhui")
+    pyautogui.PAUSE = 2.5 # 延迟停顿秒
+    ui_click("zhucheng")
+
+
+# 节日活动
+def huodong():
+    # 节日签到
+    step_exec(step_list=["huodong-qiandao", "huodong-qiandao-qiandao", "huodong-qiandao-guanbi"])
+    # 节日积分奖励
+    step_exec(step_list=["huodong-huodong", "huodong-jierihuodong", "huodong-jierihuodong-lingqu", "huodong-jierihuodong-fanhui"],
+             step_pause="huodong-jierihuodong-lingqu", step_pause_time=12)      # 等待一键领取完
+
 
 
 def fuben():
@@ -341,11 +381,12 @@ def wly():
     richang_qunxiongzhulu()     # 日常-群雄逐鹿
     jingjichang()               # 竞技场
     fudi()                      # 府邸-马场-寻访-谈话
-    wujiang_jinengshengji("tongyuan")  # 武将技能升级
+    wujiang_jinengshengji("simawei")  # 武将技能升级
     shijie()                    # 世界-资源田矿-城池刺探
     junshifu()                  # 军事府
     huoyue()                    # 活跃奖励
     zhengcheng()                # 征程奖励
+    huodong()                   # 活动奖励
     # fuben()
 
 
@@ -383,7 +424,7 @@ def execute_job(url):
 if __name__ == '__main__':
     # 只单独执行任务
     # wly()
-
+    # wujiang_jinengshengji("simawei")  # 武将技能升级
     # 登录
     login(login_url, username, password)
     # 执行任务
